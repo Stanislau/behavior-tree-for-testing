@@ -53,42 +53,41 @@ A library to define a tree with requirements:
 
 ```cs
 await new BehaviorTree(
-		new Sequence(
-			new MakeDoorClosedWithoutFoodInside(),
-			new CheckR6_TurnOffTheLight(),
-			new Branching(
-				new Sequence(
-					new OpenTheDoor(),
-					new CheckR4_Light_WhenCooking_Or_DoorOpened(),
-					new PushTheButton(),
-					new CheckR3_PushingButtonHasNoEffect(),
-					new CloseTheDoor(),
-					new CheckR6_TurnOffTheLight()
-				),
-				new Sequence(
-					new PushTheButton(),
-					new CheckR1_StartsCooking(),
-					new CheckR4_Light_WhenCooking_Or_DoorOpened(),
-					new PushTheButton(),
-					new CheckR2_ExtraMinute(),
-
-					new Branching(
-						new Sequence(
-							new OpenTheDoor(),
-							new CheckR5_StopsWhenOpenTheDoor()
-						),
-						new Sequence(
-							new WaitForTimeIsOut(),
-							new CheckR7_TimeIsOut_BeeperAndLight()
-						)
+	new Sequence(
+		new MakeDoorClosedWithoutFoodInside(),
+		new CheckR6_TurnOffTheLight(),
+		new Branching(
+			new Sequence(
+				new OpenTheDoor(),
+				new CheckR4_Light_WhenCooking_Or_DoorOpened(),
+				new PushTheButton(),
+				new CheckR3_PushingButtonHasNoEffect(),
+				new CloseTheDoor(),
+				new CheckR6_TurnOffTheLight()
+			),
+			new Sequence(
+				new PushTheButton(),
+				new CheckR1_StartsCooking(),
+				new CheckR4_Light_WhenCooking_Or_DoorOpened(),
+				new PushTheButton(),
+				new CheckR2_ExtraMinute(),
+				new Branching(
+					new Sequence(
+						new OpenTheDoor(),
+						new CheckR5_StopsWhenOpenTheDoor()
+					),
+					new Sequence(
+						new WaitForTimeIsOut(),
+						new CheckR7_TimeIsOut_BeeperAndLight()
 					)
 				)
 			)
 		)
 	)
-	.GetAllScenarios<MicrowaveOvenContext>()
-	.Dump()
-	.ExecuteAll(() => new MicrowaveOvenContext());
+)
+.GetAllScenarios<MicrowaveOvenContext>()
+.Dump()
+.ExecuteAll(() => new MicrowaveOvenContext());
 ```
 
 ## Sequence
