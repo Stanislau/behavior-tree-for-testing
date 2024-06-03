@@ -2,6 +2,12 @@
 
 [![PDD status](https://www.0pdd.com/svg?name=Stanislau/behavior-tree-for-testing)](https://www.0pdd.com/p?name=Stanislau/behavior-tree-for-testing)
 
+[![Hits-of-Code](https://hitsofcode.com/github/deniszhukovski/ObjectToTest)](https://hitsofcode.com/view/github/deniszhukovski/ObjectToTest)
+
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=DenisZhukovski_ObjectToTest&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=DenisZhukovski_ObjectToTest)
+
+[![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
+
 # Problem
 
 Integration testing is a mechanism to ensure that functionality works as expected against the requirements.
