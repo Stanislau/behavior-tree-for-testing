@@ -18,28 +18,13 @@ trigger:
 pool:
     vmImage: 'windows-latest'
 
-# variables:
-# - group: General
-# - group: BECSE-smart-core
-# - group: Keystore_delbmobile
-# - name: isDevelop
-#   value: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
-# - name: MajorMinorVersions
-#   value: 3.0
-# - name: PatchNumber
-#   ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-#     value: 'PR'
-#   ${{ else }}:
-#     value: $[counter(variables['MajorMinorVersions'], 0)]
-# - name: BuildNumber
-#   value: $[counter('UniqueBuildNumber', 0001)]
-# - name: NugetPackageVersion
-#   ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-#     value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['PatchNumber'])]
-#   ${{ else }}:
-#     value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['BuildNumber'])]
-
-# name: $(NugetPackageVersion)
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  releaseBuildNumber: '1.0.0'
+  outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
+  isDevelop: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
 
 steps:
   
@@ -50,11 +35,10 @@ steps:
     version: 8.x
   continueOnError: true
 
-- task: Bash@3
-  displayName: Restore nuget
+- task: NuGetToolInstaller@1
+- task: NuGetCommand@2
   inputs:
-    targetType: 'inline'
-    script: dotnet restore BehaviorTreeForTests.sln
+    restoreSolution: '$(solution)'
   
 # - task: SonarQubePrepare@5
 #   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
