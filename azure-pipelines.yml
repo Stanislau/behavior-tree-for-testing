@@ -17,28 +17,28 @@ trigger:
 
 pool: Default
 
-variables:
-- group: General
-- group: BECSE-smart-core
-- group: Keystore_delbmobile
-- name: isDevelop
-  value: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
-- name: MajorMinorVersions
-  value: 3.0
-- name: PatchNumber
-  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-    value: 'PR'
-  ${{ else }}:
-    value: $[counter(variables['MajorMinorVersions'], 0)]
-- name: BuildNumber
-  value: $[counter('UniqueBuildNumber', 0001)]
-- name: NugetPackageVersion
-  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-    value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['PatchNumber'])]
-  ${{ else }}:
-    value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['BuildNumber'])]
+# variables:
+# - group: General
+# - group: BECSE-smart-core
+# - group: Keystore_delbmobile
+# - name: isDevelop
+#   value: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
+# - name: MajorMinorVersions
+#   value: 3.0
+# - name: PatchNumber
+#   ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+#     value: 'PR'
+#   ${{ else }}:
+#     value: $[counter(variables['MajorMinorVersions'], 0)]
+# - name: BuildNumber
+#   value: $[counter('UniqueBuildNumber', 0001)]
+# - name: NugetPackageVersion
+#   ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+#     value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['PatchNumber'])]
+#   ${{ else }}:
+#     value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['BuildNumber'])]
 
-name: $(NugetPackageVersion)
+# name: $(NugetPackageVersion)
 
 steps:
   
