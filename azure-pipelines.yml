@@ -1,0 +1,90 @@
+# Xamarin.Android
+# Build a Xamarin.Android project.
+# Add steps that test, sign, and distribute an app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xamarin
+
+trigger:
+  branches:
+    include:
+    - master
+    - develop
+    - release/*
+    - N9
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+pool: Default
+
+variables:
+- group: General
+- group: BECSE-smart-core
+- group: Keystore_delbmobile
+- name: isDevelop
+  value: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
+- name: MajorMinorVersions
+  value: 3.0
+- name: PatchNumber
+  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    value: 'PR'
+  ${{ else }}:
+    value: $[counter(variables['MajorMinorVersions'], 0)]
+- name: BuildNumber
+  value: $[counter('UniqueBuildNumber', 0001)]
+- name: NugetPackageVersion
+  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['PatchNumber'])]
+  ${{ else }}:
+    value: $[format('{0}.{1}', variables['MajorMinorVersions'], variables['BuildNumber'])]
+
+name: $(NugetPackageVersion)
+
+steps:
+  
+- task: UseDotNet@2
+  displayName: 'Use .NET 8.x'
+  inputs:
+    packageType: 'sdk'
+    version: 8.x
+  continueOnError: true
+
+- task: Bash@3
+  displayName: Restore nuget
+  inputs:
+    targetType: 'inline'
+    script: dotnet restore BehaviorTreeForTests.sln
+  
+# - task: SonarQubePrepare@5
+#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+#   displayName: 'Prepare analysis on SonarQube'
+#   inputs:
+#     SonarQube: 'DELHAIZE SonarQube'
+#     projectKey: '$(sonar_project_key)'
+#     projectName: '$(sonar_project_name)'
+#     extraProperties: |
+#         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
+#         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run tests'
+  inputs:
+    command: 'test'
+    projects: '**/BehaviorTreeForTests.Tests.csproj'
+    publishTestResults: true
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true "/p:CoverletOutputFormat=\"opencover,Cobertura\""'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage result'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '**/*.cobertura.xml'
+
+# - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+#   displayName: 'Run Code Analysis'
+#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+
+# - task: SonarSource.sonarqube.291ed61f-1ee4-45d3-b1b0-bf822d9095ef.SonarQubePublish@4
+#   displayName: 'Publish Quality Gate Result'
+#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+ 
