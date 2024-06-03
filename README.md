@@ -1,5 +1,7 @@
 # Behavior Tree for Testing
 
+[![PDD status](https://www.0pdd.com/svg?name=epam-cross-platform-lab/android-layout-from-code)](https://www.0pdd.com/p?name=epam-cross-platform-lab/android-layout-from-code)
+
 # Problem
 
 Integration testing is a mechanism to ensure that functionality works as expected against the requirements.
@@ -108,3 +110,11 @@ Visual tool to build the tree in a user friendly way so customer or BA can use i
 
 Behavior tree can be used by developers to extract modules from requirements, applying real Behavior Driven Development into a project.
 
+/*
+* @todo #1 20m/Arch Create a document describing presentation plan and decompose it into steps.
+ * PresentationPlan.md with presentation steps.
+*/
+
+/*
+* @todo #2 30m/Dev Setup solution with core library, tests and example project.
+*/
