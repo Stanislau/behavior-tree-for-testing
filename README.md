@@ -1,6 +1,6 @@
 # Behavior Tree for Testing
 
-[![PDD status](https://www.0pdd.com/svg?name=epam-cross-platform-lab/android-layout-from-code)](https://www.0pdd.com/p?name=epam-cross-platform-lab/android-layout-from-code)
+[![PDD status](https://www.0pdd.com/svg?name=Stanislau/behavior-tree-for-testing)](https://www.0pdd.com/p?name=Stanislau/behavior-tree-for-testing)
 
 # Problem
 
@@ -111,14 +111,14 @@ Visual tool to build the tree in a user friendly way so customer or BA can use i
 Behavior tree can be used by developers to extract modules from requirements, applying real Behavior Driven Development into a project.
 
 /*
-* @todo 20m/Arch Create a document describing presentation plan and decompose it into steps.
+* @todo #:20m/Arch Create a document describing presentation plan and decompose it into steps.
  * PresentationPlan.md with presentation steps.
 */
 
 /*
-* @todo 30m/Dev Setup solution with core library, tests and example project.
+* @todo #:30m/Dev Setup solution with core library, tests and example project.
 */
 
 /*
-* @todo 30m/Dev test todo to check how PDD works.
+* @todo #:30m/Dev test todo to check how PDD works.
 */
