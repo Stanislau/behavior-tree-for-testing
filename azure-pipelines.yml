@@ -15,7 +15,8 @@ trigger:
     - README.md
     - docs/*
 
-pool: Default
+pool:
+    vmImage: 'windows-latest'
 
 # variables:
 # - group: General
