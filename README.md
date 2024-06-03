@@ -114,7 +114,3 @@ Behavior tree can be used by developers to extract modules from requirements, ap
 * @todo #:20m/Arch Create a document describing presentation plan and decompose it into steps.
  * PresentationPlan.md with presentation steps.
 */
-
-/*
-* @todo #:30m/Dev Setup solution with core library, tests and example project.
-*/
