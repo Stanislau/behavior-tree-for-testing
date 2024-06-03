@@ -3,12 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehaviorTreeForTests.Core", "BehaviorTreeForTests.Core\BehaviorTreeForTests.Core.csproj", "{159AD693-875C-46CB-B893-96EB5A2886B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BehaviorTreeForTests.Core", "BehaviorTreeForTests.Core\BehaviorTreeForTests.Core.csproj", "{159AD693-875C-46CB-B893-96EB5A2886B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehaviorTreeForTests.Tests", "BehaviorTreeForTests.Tests\BehaviorTreeForTests.Tests.csproj", "{18920D75-34E1-49A0-AD00-34A76B7D2E73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BehaviorTreeForTests.Tests", "BehaviorTreeForTests.Tests\BehaviorTreeForTests.Tests.csproj", "{18920D75-34E1-49A0-AD00-34A76B7D2E73}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5420C7D8-B84D-49E9-9A05-28068FE8F1E7}"
 	ProjectSection(SolutionItems) = preProject
+		..\azure-pipelines.yml = ..\azure-pipelines.yml
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject

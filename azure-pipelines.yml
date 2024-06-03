@@ -1,0 +1,75 @@
+# Xamarin.Android
+# Build a Xamarin.Android project.
+# Add steps that test, sign, and distribute an app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xamarin
+
+trigger:
+  branches:
+    include:
+    - main
+    - master
+    - develop
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+pool:
+    vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  releaseBuildNumber: '1.0.0'
+  outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
+  isDevelop: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+
+steps:
+  
+- task: UseDotNet@2
+  displayName: 'Use .NET 8.x'
+  inputs:
+    packageType: 'sdk'
+    version: 8.x
+  continueOnError: true
+
+- task: NuGetToolInstaller@1
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+  
+# - task: SonarQubePrepare@5
+#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+#   displayName: 'Prepare analysis on SonarQube'
+#   inputs:
+#     SonarQube: 'DELHAIZE SonarQube'
+#     projectKey: '$(sonar_project_key)'
+#     projectName: '$(sonar_project_name)'
+#     extraProperties: |
+#         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
+#         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run tests'
+  inputs:
+    command: 'test'
+    projects: '**/BehaviorTreeForTests.Tests.csproj'
+    publishTestResults: true
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true "/p:CoverletOutputFormat=\"opencover,Cobertura\""'
+
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish code coverage result'
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: '**/*.cobertura.xml'
+
+# - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
+#   displayName: 'Run Code Analysis'
+#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+
+# - task: SonarSource.sonarqube.291ed61f-1ee4-45d3-b1b0-bf822d9095ef.SonarQubePublish@4
+#   displayName: 'Publish Quality Gate Result'
+#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+ 

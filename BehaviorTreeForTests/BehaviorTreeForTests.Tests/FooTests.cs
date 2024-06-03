@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace BehaviorTreeForTests.Tests
 {
     /*
-     * @todo #4:30m/Arch Setup automation pipeline to check pull request health.
+     * @todo #9:30m/DevOps Setup sonar cube for coverage.
      */
 
     [TestFixture]
