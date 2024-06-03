@@ -13,6 +13,7 @@ namespace BehaviorTreeForTests.Tests
         [Test]
         public void Smoke()
         {
+
             Assert.That(new Foo().ToString(), Is.EqualTo("bar"));
         }
     }
