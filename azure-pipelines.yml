@@ -45,7 +45,7 @@ steps:
   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
   displayName: 'Prepare analysis on SonarQube'
   inputs:
-    SonarQube: 'SonarCloudConnection'
+    SonarQube: 'SonarCubeManual'
     projectKey: 'StanislauKanaplianik0956_BehaviorTreeForTests'
     projectName: 'BehaviorTreeForTests'
     extraProperties: |
