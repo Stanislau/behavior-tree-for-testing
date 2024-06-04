@@ -44,10 +44,10 @@ steps:
   displayName: 'Prepare analysis on SonarQube'
   inputs:
     SonarQube: 'SonarCubeManual'
+    scannerMode: 'MSBuild'
     projectKey: 'Stanislau_behavior-tree-for-testing'
     projectName: 'behavior-tree-for-testing'
-    extraProperties: |
-        /o:"Stanislau"
+    extraProperties:
         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
 
