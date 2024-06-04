@@ -41,7 +41,6 @@ steps:
     restoreSolution: '$(solution)'
   
 - task: SonarQubePrepare@5
-  condition: and(succeeded(), eq(variables.force_sonar_skip, false))
   displayName: 'Prepare analysis on SonarQube'
   inputs:
     SonarQube: 'SonarCubeManual'
