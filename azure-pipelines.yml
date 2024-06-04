@@ -19,7 +19,7 @@ pool:
     vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  solution: 'BehaviorTreeForTests/BehaviorTreeForTests.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   releaseBuildNumber: '1.0.0'
@@ -35,21 +35,22 @@ steps:
     version: 8.x
   continueOnError: true
 
-- task: NuGetToolInstaller@1
-- task: NuGetCommand@2
+- task: Bash@3
+  displayName: Restore nuget
   inputs:
-    restoreSolution: '$(solution)'
+    targetType: 'inline'
+    script: dotnet restore $(solution)
   
-# - task: SonarQubePrepare@5
-#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
-#   displayName: 'Prepare analysis on SonarQube'
-#   inputs:
-#     SonarQube: 'DELHAIZE SonarQube'
-#     projectKey: '$(sonar_project_key)'
-#     projectName: '$(sonar_project_name)'
-#     extraProperties: |
-#         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
-#         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'SonarCloudV2'
+    organization: 'stanislau'
+    scannerMode: 'MSBuild'
+    projectKey: 'Stanislau_behavior-tree-for-testing'
+    projectName: 'behavior-tree-for-testing'
+    extraProperties: |
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
+        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
@@ -65,11 +66,8 @@ steps:
     codeCoverageTool: Cobertura
     summaryFileLocation: '**/*.cobertura.xml'
 
-# - task: SonarSource.sonarqube.6D01813A-9589-4B15-8491-8164AEB38055.SonarQubeAnalyze@4
-#   displayName: 'Run Code Analysis'
-#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
-
-# - task: SonarSource.sonarqube.291ed61f-1ee4-45d3-b1b0-bf822d9095ef.SonarQubePublish@4
-#   displayName: 'Publish Quality Gate Result'
-#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+- task: SonarCloudAnalyze@1
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
  

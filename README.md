@@ -2,25 +2,11 @@
 
 [![PDD status](https://www.0pdd.com/svg?name=Stanislau/behavior-tree-for-testing)](https://www.0pdd.com/p?name=Stanislau/behavior-tree-for-testing)
 
-<!---
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=StanislauKanaplianik0956_BehaviorTreeForTests&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=StanislauKanaplianik0956_BehaviorTreeForTests)
 
-[![Hits-of-Code](https://hitsofcode.com/github/Stanislau/behavior-tree-for-testing)](https://hitsofcode.com/github/Stanislau/behavior-tree-for-testing)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=StanislauKanaplianik0956_BehaviorTreeForTests&metric=coverage)](https://sonarcloud.io/summary/new_code?id=StanislauKanaplianik0956_BehaviorTreeForTests)
 
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Stanislau__behavior-tree-for-testing&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Stanislau__behavior-tree-for-testing)
-
-/*
-* @todo #9:30m/DevOps Hits of Code metrics
-*/
-
-/*
-* @todo #9:30m/DevOps Lines of Code metrics
-*/
-
-/*
-* @todo #9:30m/DevOps Code Coverage: Spend time to investigate if it is possible.
-*/
-
--->
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Stanislau_behavior-tree-for-testing&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Stanislau_behavior-tree-for-testing)
 
 [![EO principles respected here](https://www.elegantobjects.org/badge.svg)](https://www.elegantobjects.org)
 
