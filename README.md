@@ -2,9 +2,9 @@
 
 [![PDD status](https://www.0pdd.com/svg?name=Stanislau/behavior-tree-for-testing)](https://www.0pdd.com/p?name=Stanislau/behavior-tree-for-testing)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=StanislauKanaplianik0956_BehaviorTreeForTests&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=StanislauKanaplianik0956_BehaviorTreeForTests)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Stanislau_behavior-tree-for-testing&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Stanislau_behavior-tree-for-testing)
 
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=StanislauKanaplianik0956_BehaviorTreeForTests&metric=coverage)](https://sonarcloud.io/summary/new_code?id=StanislauKanaplianik0956_BehaviorTreeForTests)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Stanislau_behavior-tree-for-testing&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Stanislau_behavior-tree-for-testing)
 
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=Stanislau_behavior-tree-for-testing&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=Stanislau_behavior-tree-for-testing)
 
