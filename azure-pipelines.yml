@@ -40,16 +40,15 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
   
-- task: SonarQubePrepare@5
-  displayName: 'Prepare analysis on SonarQube'
+- task: SonarCloudPrepare@1
   inputs:
-    SonarQube: 'SonarCubeManual'
+    SonarCloud: 'SonarCloudConnection'
+    organization: 'Stanislau'
     scannerMode: 'MSBuild'
     projectKey: 'Stanislau_behavior-tree-for-testing'
     projectName: 'behavior-tree-for-testing'
     extraProperties: |
-        /o:Stanislau
-        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\tests\ObjectToTest.UnitTests\coverage.opencover.xml
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
 
 - task: DotNetCoreCLI@2
