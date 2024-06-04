@@ -42,8 +42,8 @@ steps:
   
 - task: SonarCloudPrepare@1
   inputs:
-    SonarCloud: 'SonarCloudConnection'
-    organization: 'Stanislau'
+    SonarCloud: 'SonarCloudV2'
+    organization: 'stanislau'
     scannerMode: 'MSBuild'
     projectKey: 'Stanislau_behavior-tree-for-testing'
     projectName: 'behavior-tree-for-testing'
