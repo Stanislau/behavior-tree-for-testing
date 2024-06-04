@@ -41,16 +41,16 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
   
-# - task: SonarQubePrepare@5
-#   condition: and(succeeded(), eq(variables.force_sonar_skip, false))
-#   displayName: 'Prepare analysis on SonarQube'
-#   inputs:
-#     SonarQube: 'DELHAIZE SonarQube'
-#     projectKey: '$(sonar_project_key)'
-#     projectName: '$(sonar_project_name)'
-#     extraProperties: |
-#         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
-#         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
+- task: SonarQubePrepare@5
+  condition: and(succeeded(), eq(variables.force_sonar_skip, false))
+  displayName: 'Prepare analysis on SonarQube'
+  inputs:
+    SonarQube: 'SonarCloudConnection'
+    projectKey: 'StanislauKanaplianik0956_BehaviorTreeForTests'
+    projectName: 'BehaviorTreeForTests'
+    extraProperties: |
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
+        sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
 
 - task: DotNetCoreCLI@2
   displayName: 'Run tests'
