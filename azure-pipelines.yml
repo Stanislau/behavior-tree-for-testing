@@ -43,7 +43,7 @@ steps:
 - task: SonarQubePrepare@5
   displayName: 'Prepare analysis on SonarQube'
   inputs:
-    SonarQube: 'SonarCubeManual'
+    SonarQube: 'Stanislau SonarCubeManual'
     scannerMode: 'MSBuild'
     projectKey: 'Stanislau_behavior-tree-for-testing'
     projectName: 'behavior-tree-for-testing'
