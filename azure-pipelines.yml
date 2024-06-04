@@ -49,7 +49,7 @@ steps:
     projectKey: 'Stanislau_behavior-tree-for-testing'
     projectName: 'behavior-tree-for-testing'
     extraProperties: |
-        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\BehaviorTreeForTests.Tests\coverage.opencover.xml
+        sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)\**\coverage.opencover.xml
         sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)\*.trx
 
 - task: DotNetCoreCLI@2
