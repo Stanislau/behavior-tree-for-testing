@@ -10,6 +10,7 @@ trigger:
     - master
     - develop
     - release/*
+    - N11
   paths:
     exclude:
     - README.md
