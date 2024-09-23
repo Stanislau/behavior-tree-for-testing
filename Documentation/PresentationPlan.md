@@ -1,12 +1,40 @@
 # What is BT
 
+Quick overview of behavior tree for testing can be found here:
+https://github.com/Stanislau/behavior-tree-for-testing
+
+In general, behavior tree is a way to systemize testing requirements and scenarios, but it is a tool that should be used carefully.
+
+First we need to understand testing pyramid:
+https://www.headspin.io/blog/the-testing-pyramid-simplified-for-one-and-all
+
+Let's review it a bit starting from the bottom - Unit Tests. While it is possible to use BT approach for Unit Tests, it is not recommended, because usually unit tests are too simple and do not contain any interdependent flows. All of them are followed arrange-act-assert pattern (AAA).
+
+In the meantime integration and e2e tests usually consist of chains of AAAs, often intersecting chains.
+
+When we are trying to write integration tests it is common for us to duplicate a lot of flows, like: process cart when user is anonymous, when user is logged in, in foreground, in background, in several different tabs and so on, so a lot of common parts are going to be duplicated. As a result maintanance and visibility of coverage decreasing a lot. We can solve the problem by using Behavior Trees.
+
+Behavior Tree (BT) is a way to organize flows in a form of tree, very similar to flow diagram, but with a bit different notation. More information is here:
+https://en.wikipedia.org/wiki/Behavior_tree
+https://staff.itee.uq.edu.au/kirsten/publications/BTMergeSemantics_withCopyright.pdf
+
+Below I show how to solve typical exponential tests growth with Behavior Tree.
+
 # Demo
 
-/*
-* @todo #3:20m/Arch Need to test mobile application with different starting points and different results.
-*/
+Problem: Need to cover new functionality with integration tests.
+
+Environment: Mobile application, some UI test framework.
+
+We will assume that not all requirements came into account right away. It means that (similar like in real world scenario) we do not have full picture and cannot prepare all test cases.
 
 ## Understanding of test cases
+
+Requirements for MVP:
+- Tapping on push notification should navigate to feature proposal.
+- Once user applies to it, new tab become available for the user.
+
+- Once user rejects it, new notification icon appeared in the settings.
 
 /*
 * @todo #3:20m/Arch Describe possible requirements.
@@ -15,27 +43,79 @@
 * Once user rejects it, new notification icon appeared in the settings.
 */
 
-### MVP
+### MVP testsing
 
-/*
-* @todo #3:20m/Arch Start the app, apply to new app feature.
-*/
+```cs
+[Test]
+public void TapOnNotification_ApplyToFeature()
+{
+    var c = new Context();
+    c.TapOnNotification();
+    c.EnsureAppIsRunning();
+    c.EnsureNavigatedToFeatureProposal();
+    c.Item.FeatureProposal.Apply();
+    c.Item.Feature.IsEnabled.ClaimTrue();
+}
+```
+
+Notification appears, system taps on notification, ensures app started and navigated to feature proposal, then user applies to feature and system ensures that feature is enabled.
+
+This test is straitforward, it is just happy path, which not take into account any technical pitfalls.
 
 ### More cases with some technical details
 
-/*
-* @todo #3:20m/Arch App is started.
-*/
+First of all app can be already running when notification appears.
+It splits existing test into two new tests.
 
-/*
-* @todo #3:20m/Arch User is not logged in.
-*/
+```cs
+[Test]
+public void TapOnNotification_AppIsClosed_ApplyToFeature()
+{
+    var c = new Context();
+
+    c.EnsureAppIsNotRunning();
+    c.TapOnNotification();
+    c.EnsureAppIsRunning();
+
+    c.EnsureNavigatedToFeatureProposal();
+    c.Item.FeatureProposal.Apply();
+    c.Item.Feature.IsEnabled.ClaimTrue();
+}
+
+[Test]
+public void TapOnNotification_AppIsRunning_ApplyToFeature()
+{
+    var c = new Context();
+
+    c.EnsureAppIsRunning();
+
+    c.TapOnNotification();
+    c.EnsureNavigatedToFeatureProposal();
+    c.Item.FeatureProposal.Apply();
+    c.Item.Feature.IsEnabled.ClaimTrue();
+}
+```
+
+As you may notice, almost 80% of entire test bodies are duplicated. It is unavoidable when creating integration tests. The only method how to avoid duplication is to wrap those common lines into methods or classes, and it immediately ruins all the visibility around what is going on in tests.
+
+Next pitfall: user can be logged out for some reason, when notification is tapped.
+I would not provide full code, just names of tests, but test bodies contains unavoidable duplications.
+
+```cs
+TapOnNotification_AppIsClosed_LoggedIn_ApplyToFeature
+TapOnNotification_AppIsRunning_LoggedIn_ApplyToFeature
+TapOnNotification_AppIsClosed_NotLoggedIn_ApplyToFeature
+TapOnNotification_AppIsRunning_NotLoggedIn_ApplyToFeature
+```
+
+As you may see, new requirement causes tests to be doubled. Now the amount of tests are 4 and they are just permutations of preparation steps.
 
 ### Maintanance killer
 
-/*
-* @todo #3:20m/Arch Reject feature.
-*/
+And after all our struggle we realize, that we also need to check failed scenario:
+Once user rejects it, new notification icon appeared in the settings.
+
+All our tests are going to double once again, 8 in total.
 
 ```cs
 TapOnNotification_AppIsClosed_LoggedIn_ApplyToFeature
