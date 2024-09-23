@@ -250,32 +250,32 @@ No code duplication, full visibility, ability to debug each step.
 If you traverse this tree using behavior tree rules you'd already come up with 4 scenarios.
 
 N1
-User is logged in
-App is started
-Tap on push notification
-Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
+- User is logged in
+- App is started
+- Tap on push notification
+- Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
 N2
-User is logged in
-App is closed
-Tap on push notification
-Ensure app is running now
-Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
+- User is logged in
+- App is closed
+- Tap on push notification
+- Ensure app is running now
+- Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
 N3
-User is not logged in
-App is started
-Tap on push notification
-Log in and continue the flow
-Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
+- User is not logged in
+- App is started
+- Tap on push notification
+- Log in and continue the flow
+- Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
 N4
-User is not logged in
-App is closed
-Tap on push notification
-Ensure app is running now
-Log in and continue the flow
-Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
+- User is not logged in
+- App is closed
+- Tap on push notification
+- Ensure app is running now
+- Log in and continue the flow
+- Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
 Finally, to add the last requirements, we just need to decompose the last step:
 
