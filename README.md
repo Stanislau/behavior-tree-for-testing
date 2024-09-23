@@ -53,7 +53,7 @@ a = 3;
 
 We tend to see the whole picture, the entire algorithm.
 
-For this there are https://en.wikipedia.org/wiki/Behavior_tree approach.
+For this there is https://en.wikipedia.org/wiki/Behavior_tree approach.
 This approach is a way to maintain requirements inside executable tree, describing the entire flow.
 Even more about this is here https://staff.itee.uq.edu.au/kirsten/publications/BTMergeSemantics_withCopyright.pdf.
 
@@ -117,8 +117,3 @@ Every leaf element is either action or requirement check.
 Visual tool to build the tree in a user friendly way so customer or BA can use it as a tool and then, similar to BDD approach, developer can automate it in form of tests.
 
 Behavior tree can be used by developers to extract modules from requirements, applying real Behavior Driven Development into a project.
-
-/*
-* @todo #:20m/Arch Create a document describing presentation plan and decompose it into steps.
- * PresentationPlan.md with presentation steps.
-*/
