@@ -34,15 +34,6 @@ Requirements for MVP:
 - Tapping on push notification should navigate to feature proposal.
 - Once user applies to it, new tab become available for the user.
 
-- Once user rejects it, new notification icon appeared in the settings.
-
-/*
-* @todo #3:20m/Arch Describe possible requirements.
-* Tapping on push notification should navigate to feature proposal.
-* Once user applies to it, new tab become available for the user.
-* Once user rejects it, new notification icon appeared in the settings.
-*/
-
 ### MVP testsing
 
 ```cs
