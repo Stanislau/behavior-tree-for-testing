@@ -1,38 +1,26 @@
-# What is BT
-
-Quick overview of behavior tree for testing can be found here:
-https://github.com/Stanislau/behavior-tree-for-testing
-
-In general, behavior tree is a way to systemize testing requirements and scenarios, but it is a tool that should be used carefully.
-
-First we need to understand testing pyramid:
-https://www.headspin.io/blog/the-testing-pyramid-simplified-for-one-and-all
-
-Let's review it a bit starting from the bottom - Unit Tests. While it is possible to use BT approach for Unit Tests, it is not recommended, because usually unit tests are too simple and do not contain any interdependent flows. All of them are followed arrange-act-assert pattern (AAA).
-
-In the meantime integration and e2e tests usually consist of chains of AAAs, often intersecting chains.
-
-When we are trying to write integration tests it is common for us to duplicate a lot of flows, like: process cart when user is anonymous, when user is logged in, in foreground, in background, in several different tabs and so on, so a lot of common parts are going to be duplicated. As a result maintanance and visibility of coverage decreasing a lot. We can solve the problem by using Behavior Trees.
-
-Behavior Tree (BT) is a way to organize flows in a form of tree, very similar to flow diagram, but with a bit different notation. More information is here:
-https://en.wikipedia.org/wiki/Behavior_tree
-https://staff.itee.uq.edu.au/kirsten/publications/BTMergeSemantics_withCopyright.pdf
-
-Below I show how to solve typical exponential tests growth with Behavior Tree.
-
-# Demo
+# Streight into the example
 
 Problem: Need to cover new functionality with integration tests.
 
-Environment: Mobile application, some UI test framework.
+## Requirements
 
-We will assume that not all requirements came into account right away. It means that (similar like in real world scenario) we do not have full picture and cannot prepare all test cases.
+Environment: 
+- Mobile application
+- Some UI test framework.
 
-## Understanding of test cases
+Description:
+- User receives promo push notification about new feature, that can be enabled in the app.
 
-Requirements for MVP:
+Acceptance criteria:
 - Tapping on push notification should navigate to feature proposal.
-- Once user applies to it, new tab become available for the user.
+- Once user applies to it, new tab becomes available for the user.
+- Once user rejected it, new feature icon appears in settings.
+
+Technical notes:
+- Application can be killed or running.
+- Anonymous user can also receive push notifications.
+
+?? probably some diagrams should go here
 
 ### MVP testsing
 
@@ -87,6 +75,8 @@ public void TapOnNotification_AppIsRunning_ApplyToFeature()
 }
 ```
 
+Let's stop and analyze what was written.
+
 As you may notice, almost 80% of entire test bodies are duplicated. It is unavoidable when creating integration tests. The only method how to avoid duplication is to wrap those common lines into methods or classes, and it immediately ruins all the visibility around what is going on in tests.
 
 Next pitfall: user can be logged out for some reason, when notification is tapped.
@@ -120,29 +110,170 @@ TapOnNotification_AppIsClosed_NotLoggedIn_RejectFeature
 TapOnNotification_AppIsRunning_NotLoggedIn_RejectFeature
 ```
 
-## Behavior Tree approach
+| App is running   | User is logged in | Intend to apply |
+| :----- | :------: | ----: |
+| False | False | False |
+| False | False | True |
+| False | True | False |
+| False | True | True |
+| True | False | False |
+| True | False | True |
+| True | True | False |
+| True | True | True |
 
-Here is descibed approach how to define BT from code.
-Key concepts:
-- Sequence - node-controller, executes all children in sequence.
-- Step - block of code to be executed.
-- Branching - each new run this node execute new child from the list of children.
-- When - conditional executing node, executed it's child only when required node is included into execution flow.
+### Let's do some math
+
+Formally we have superset of three different unions and mathematecally speaking amount of cases are:
+P(AppState) x P(UserState) x P(UserIntent) = 2 x 2 x 2 = 8;
+This could be even worse. Currently in this example we assumed that: AppState = { running, closed }, but in reality AppState = { running, closed, in background }.
+It means that the amount of different cases should be 3 x 2 x 2 = 12;
+To make things even worse let's assume that now we have additional requirement:
+"Navigation is ignored if user's role is manager".
+Considering all mentioned above:
+P(AppState) x P(UserState) x P(UserRole) x P(UserIntent) = 3 x 2 x 2 x 2 = 24;
+Actually some of those steps are duplicated, especially for manager's role, but with this amount of similar cases it is obvious, that something is wrong with testing.
+Assuming that we spend some significant amount of time to cover all this scenarios, every change in requirements is going to cause full review process even for scenarios, that were not affected by the requirements directly.
+
+New approach is needed.
+
+# Behavior Tree approach
+
+## Unit tests versus integrational tests
+
+1. Unit tests have Arrange-Act-Assert pattern that makes tests streitforward.
+2. In the meantime integration and e2e tests usually consist of chains of AAAs, often intersecting chains.
+3. When we are trying to write integration tests it is common for us to duplicate a lot of flows, like: process cart when user is anonymous, when user is logged in, in foreground, in background, in several different tabs and so on, so a lot of common parts are going to be duplicated. As a result maintanance and visibility of coverage decreasing a lot.
+4. In this case it is tempting to split integration test into independent parts of AAA blocks and chain them somehow, defining dependencies.
+5. But we cannot, we don't have the right tool.
+6. Or we do?..
+
+## Formal definition
+
+A behavior tree is a mathematical model of plan execution used in computer science, robotics, control systems and video games.
+
+First of all it is a model of plan execution.
+In our case we can think of BT as a way to systemize testing requirements and scenarios.
+Quick overview can be found here:
+https://github.com/Stanislau/behavior-tree-for-testing
+
+Behavior Tree (BT) is a way to organize flows in a form of tree, very similar to flow diagram, but with a bit different notation. More information is here:
+https://en.wikipedia.org/wiki/Behavior_tree
+https://staff.itee.uq.edu.au/kirsten/publications/BTMergeSemantics_withCopyright.pdf
+
+Seems like it is just what we need.
+
+## Key concepts
+
+### Step
+
+Step - block of code to be executed.
+It can be any block of code, but for us it is usually one of AAA pattern part that can be written just once and then integrated into the structure.
+To not overcomplicate things Step - it is just some useful code versus other parts of BT components.
+
+### Sequence
+ 
+Sequence - node-controller, executes all children in sequencial order.
+Children of BT could be steps or any other types of BT elements, even other BTs.
+
+![Local Image](Sequence.png)
+
+![Local Image](SequenceTraverse.png)
+
+### Branching
+
+Branching - each new run this node execute new child from the list of children.
+
+![Local Image](Branching.png)
+
+![Local Image](BranchingTraverse1.png)
+![Local Image](BranchingTraverse2.png)
+![Local Image](BranchingTraverse3.png)
+
+### When
+
+When - conditional executing node, executed it's child only when required node is included into execution flow.
+
+![Local Image](When.png)
+
+![Local Image](WhenTraverse1.png)
+![Local Image](WhenTraverse2.png)
+
+## Same example, different approach
+
+Below I show how to solve mentioned exponential tests growth with Behavior Tree.
 
 ### MVP
+
+![Local Image](001.png)
+
+```cs
+new BehaviorTree(
+	new Step(
+		"Tapping on push notification should navigate to feature proposal. " +
+		"Once user applies to it, new tab become available for the user.",
+		async c =>
+		{
+			// preparation part
+			c.TapOnNotification();
+			c.EnsureAppIsRunning();
+			// functionality check part
+			c.EnsureNavigatedToFeatureProposal();
+			c.Item.FeatureProposal.Apply();
+			c.Item.Feature.IsEnabled.ClaimTrue();
+		}
+	)
+)
+```
+
+Same as step 1 standalone unit test, so we can start with simple test without any tree in mind.
+It provides smooth learning curve and intuitive tree decomposition. You do not need to think about decomposition in advance, you can start writing your tests right away.
+
+### Application state
+
+?? diagram
 
 ```cs
 new BehaviorTree(
 	new Sequence(
+		new Branching(
+			new Step(
+				"App is started",
+				async c =>
+				{
+					c.EnsureAppIsRunning();
+				}
+			).As(out var appIsStarted),
+
+			new Step(
+				"App is closed",
+				async c =>
+				{
+					c.EnsureAppIsNotRunning();
+				}
+			).As(out var appIsClosed)
+		),
+
+		new Step(
+			"Tap on push notification",
+			async c =>
+			{
+				c.TapOnNotification();
+			}
+		),
+
+		new When(appIsClosed,
+			new Step("Ensure app is running now",
+				async c =>
+				{
+					c.EnsureAppIsRunning();
+				})
+		),
+
 		new Step(
 			"Tapping on push notification should navigate to feature proposal. " +
 			"Once user applies to it, new tab become available for the user.",
 			async c =>
 			{
-				// preparation part
-				c.TapOnNotification();
-				c.EnsureAppIsRunning();
-				// functionality check part
 				c.EnsureNavigatedToFeatureProposal();
 				c.Item.FeatureProposal.Apply();
 				c.Item.Feature.IsEnabled.ClaimTrue();
@@ -152,10 +283,42 @@ new BehaviorTree(
 )
 ```
 
-Same as step 1 standalone unit test, so we can start with simple test without any tree in mind.
-It provides smooth learning curve and intuitive tree decomposition. You do not need to think about decomposition in advance, you can start writing your tests right away.
+In classic approach it looked like:
 
-### Application and User state
+```cs
+[Test]
+public void TapOnNotification_AppIsClosed_ApplyToFeature()
+{
+    var c = new Context();
+
+    c.EnsureAppIsNotRunning();
+    c.TapOnNotification();
+    c.EnsureAppIsRunning();
+
+    c.EnsureNavigatedToFeatureProposal();
+    c.Item.FeatureProposal.Apply();
+    c.Item.Feature.IsEnabled.ClaimTrue();
+}
+
+[Test]
+public void TapOnNotification_AppIsRunning_ApplyToFeature()
+{
+    var c = new Context();
+
+    c.EnsureAppIsRunning();
+
+    c.TapOnNotification();
+    c.EnsureNavigatedToFeatureProposal();
+    c.Item.FeatureProposal.Apply();
+    c.Item.Feature.IsEnabled.ClaimTrue();
+}
+```
+
+As we can see, here we already reusing some part of a code, approximately 40% of it.
+
+### User state
+
+?? diagram with execution of it
 
 ```cs
 new BehaviorTree(
@@ -240,6 +403,8 @@ Here we just moved preparation part into tree-like structure. Created two branch
 No code duplication, full visibility, ability to debug each step.
 If you traverse this tree using behavior tree rules you'd already come up with 4 scenarios.
 
+?? diagrams of such scenarios
+
 N1
 - User is logged in
 - App is started
@@ -268,6 +433,8 @@ N4
 - Log in and continue the flow
 - Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
+### Negative case handling
+
 Finally, to add the last requirements, we just need to decompose the last step:
 
 ```cs
@@ -282,6 +449,8 @@ new Step(
 	}
 )
 ```
+
+?? changed diagram
 
 We move navigation check into common step and branching the rest.
 
@@ -319,3 +488,11 @@ new Branching(
 
 That's it. Adding two more steps added 4 more scenarios.
 Imagine that adding each new requirement will generate even more scenarios without expanding codebase.
+
+## What's next
+
+To make long story short:
+- Add tools to support BTT approach.
+- Visualize three, created from code.
+- Apply same approach to requirements definition.
+- Make all teammembers talk the same language.
