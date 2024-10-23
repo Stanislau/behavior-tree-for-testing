@@ -230,49 +230,34 @@ It provides smooth learning curve and intuitive tree decomposition. You do not n
 
 ### Application state
 
-?? diagram
+We can (as an intermediate step) rewrite our tree a bit to decompose to the sequence of different steps.
+![Local Image](002.png)
+
+And then provide additional starting point with new check.
+
+![Local Image](003.png)
+
+Note that there is only one source of two flows, so no code duplication here so far. Here is code sample how it might look if we code this.
 
 ```cs
 new BehaviorTree(
 	new Sequence(
 		new Branching(
-			new Step(
-				"App is started",
-				async c =>
-				{
-					c.EnsureAppIsRunning();
-				}
-			).As(out var appIsStarted),
+			new Step("App is started", c => c.EnsureAppIsRunning()).As(out var appIsStarted),
 
-			new Step(
-				"App is closed",
-				async c =>
-				{
-					c.EnsureAppIsNotRunning();
-				}
-			).As(out var appIsClosed)
+			new Step("App is closed", c => c.EnsureAppIsNotRunning()).As(out var appIsClosed),
 		),
 
-		new Step(
-			"Tap on push notification",
-			async c =>
-			{
-				c.TapOnNotification();
-			}
-		),
+		new Step("Tap on push notification", c => c.TapOnNotification()),
 
 		new When(appIsClosed,
-			new Step("Ensure app is running now",
-				async c =>
-				{
-					c.EnsureAppIsRunning();
-				})
+			new Step("Ensure app is running now", c => c.EnsureAppIsRunning())
 		),
 
 		new Step(
 			"Tapping on push notification should navigate to feature proposal. " +
 			"Once user applies to it, new tab become available for the user.",
-			async c =>
+			c =>
 			{
 				c.EnsureNavigatedToFeatureProposal();
 				c.Item.FeatureProposal.Apply();
@@ -318,63 +303,34 @@ As we can see, here we already reusing some part of a code, approximately 40% of
 
 ### User state
 
-?? diagram with execution of it
+Further adjustments. Do not need to think about already defined parts. If functionality is extending, we need to extend the tree.
+
+![Local Image](004.png)
 
 ```cs
 new BehaviorTree(
 	new Sequence(
-		new Branching(
-			new Step(
-				"User is logged in",
-				async c =>
-				{
-					c.PrepareLoggedInContext();
-				}
-			).As(out var userIsLoggedIn),
-
-			new Step(
-				"User is not logged in",
-				async c =>
-				{
-					c.EnsureAppIsNotRunning();
-				}
-			).As(out var userIsNotLoggedIn)
-		),
 
 		new Branching(
-			new Step(
-				"App is started",
-				async c =>
-				{
-					c.EnsureAppIsRunning();
-				}
-			).As(out var appIsStarted),
+			new Step("App is started", c => c.EnsureAppIsRunning()).As(out var appIsStarted),
 
-			new Step(
-				"App is closed",
-				async c =>
-				{
-					c.EnsureAppIsNotRunning();
-				}
-			).As(out var appIsClosed)
+			new Step("App is closed", c => c.EnsureAppIsNotRunning()).As(out var appIsClosed),
 		),
 
-		new Step(
-			"Tap on push notification",
-			async c =>
-			{
-				c.TapOnNotification();
-			}
+		// new code block (yellow)
+		new Branching(
+			new Step("User is logged in", c => c.PrepareLoggedInContext()).As(out var userIsLoggedIn),
+
+			new Step("User is not logged in", c => c.EnsureAppIsNotRunning()).As(out var userIsNotLoggedIn)
 		),
+
+		new Step("Tap on push notification", c => c.TapOnNotification()),
 
 		new When(appIsClosed,
-			new Step("Ensure app is running now",
-				async c =>
-				{
-					c.EnsureAppIsRunning();
-				})
+			new Step("Ensure app is running now", c => c.EnsureAppIsRunning())
 		),
 
+		// also new code block (orange)
 		new When(userIsNotLoggedIn,
 			new Step("Log in and continue the flow",
 				async c =>
@@ -388,7 +344,7 @@ new BehaviorTree(
 		new Step(
 			"Tapping on push notification should navigate to feature proposal. " +
 			"Once user applies to it, new tab become available for the user.",
-			async c =>
+			c =>
 			{
 				c.EnsureNavigatedToFeatureProposal();
 				c.Item.FeatureProposal.Apply();
@@ -399,11 +355,10 @@ new BehaviorTree(
 )
 ```
 
-Here we just moved preparation part into tree-like structure. Created two branches, added some branch specific checks, kept common part.
 No code duplication, full visibility, ability to debug each step.
 If you traverse this tree using behavior tree rules you'd already come up with 4 scenarios.
 
-?? diagrams of such scenarios
+![Local Image](005.png)
 
 N1
 - User is logged in
@@ -437,6 +392,8 @@ N4
 
 Finally, to add the last requirements, we just need to decompose the last step:
 
+![Local Image](006.png)
+
 ```cs
 new Step(
 	"Tapping on push notification should navigate to feature proposal. " +
@@ -450,22 +407,18 @@ new Step(
 )
 ```
 
-?? changed diagram
+
 
 We move navigation check into common step and branching the rest.
 
+![Local Image](007.png)
+
 ```cs
 new Step(
-    "Tapping on push notification should navigate to feature proposal.",
-    async c =>
-    {
-        c.EnsureNavigatedToFeatureProposal();
-    }
-),
+    "Tapping on push notification should navigate to feature proposal.", c => c.EnsureNavigatedToFeatureProposal()),
 
 new Branching(
-    new Step(
-        "Once user applies to it, new tab become available for the user.",
+    new Step("Once user applies to it, new tab become available for the user.",
         async c =>
         {
             c.Item.FeatureProposal.Apply();
@@ -473,8 +426,7 @@ new Branching(
         }
     ),
 
-    new Step(
-        "Once user rejects it, new notification icon appeared in the settings.",
+    new Step("Once user rejects it, new notification icon appeared in the settings.",
         async c =>
         {
             c.Item.FeatureProposal.Reject();
