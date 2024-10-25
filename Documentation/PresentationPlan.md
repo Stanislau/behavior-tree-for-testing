@@ -20,8 +20,6 @@ Technical notes:
 - Application can be killed or running.
 - Anonymous user can also receive push notifications.
 
-?? probably some diagrams should go here
-
 ### MVP testsing
 
 ```cs
@@ -358,29 +356,29 @@ new BehaviorTree(
 No code duplication, full visibility, ability to debug each step.
 If you traverse this tree using behavior tree rules you'd already come up with 4 scenarios.
 
-![Local Image](005.png)
+![Local Image](008.png)
 
-N1
+N1 (blue)
 - User is logged in
 - App is started
 - Tap on push notification
 - Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
-N2
+N2 (green)
 - User is logged in
 - App is closed
 - Tap on push notification
 - Ensure app is running now
 - Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
-N3
+N3 (aqua)
 - User is not logged in
 - App is started
 - Tap on push notification
 - Log in and continue the flow
 - Tapping on push notification should navigate to feature proposal. Once user applies to it, new tab become available for the user.
 
-N4
+N4 (orange)
 - User is not logged in
 - App is closed
 - Tap on push notification
